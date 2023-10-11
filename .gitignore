@@ -1,0 +1,35 @@
+postgres-data/
+# Python
+*.pyc
+__pycache__/
+*.pyo
+*.pyd
+*.db
+
+# Virtual Environment
+venv/
+env/
+/.env
+
+# Django
+*.log
+*.pot
+*.pyc
+__pycache__/
+**/*/migrations/
+local_settings.py
+media/
+staticfiles/
+.idea/
+
+# VS Code
+.vscode/
+
+# macOS
+.DS_Store
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+
+# Editor-specific files
+*.swp
