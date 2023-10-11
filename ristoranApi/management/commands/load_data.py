@@ -1,7 +1,7 @@
 import csv
 from django.core.management.base import BaseCommand
 from ristoranApi.models import Restaurant
-
+from django.db import transaction
 class Command(BaseCommand):
     help = 'Load data from a CSV file into the database.'
     def add_arguments(self, parser):
@@ -9,6 +9,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
         csv_file = kwargs['csv_file']
+        #with transaction.atomic():
         with open(csv_file, 'r') as file:
             reader = csv.DictReader(file)
             for row in reader:

@@ -1,26 +1,96 @@
 # Create your views here.
 import json
 from django.http import JsonResponse
-from django.views.decorators.http import require_POST
+from django.views.decorators.http import require_POST, require_GET, require_http_methods
+from django.views import View
+from django.contrib.gis.geos import Point
 from . import models
 
-# Create your views here.
-
+restaurant_msgs: dict = {
+    "not_found": "restaurant not found",
+    "deleted": "restaurant deleted successfully",
+    "updated": "restaurant updated",
+    "created": "restaurant created",
+    "error": "an error has ocurred"
+}
 def index(_):
     return JsonResponse({"message":"Hello, world. You're at the index."},)
 
-@require_POST
-def create_user(request):
-    if request.method != 'POST':
-        return JsonResponse({"message":"Method no ALLOWED"},)
-    data = request.body
-    data_json = json.loads(data)
-    email = data_json.pop("email")
-    password = data_json.pop("password")
+class RestaurantListView(View):
+    def get(self, request):
+        queryset = models.Restaurant.objects.all()
+        restaurants = []
+        for restaurant in queryset:
+            restaurants.append({
+                'id': restaurant._id,
+                'name': restaurant.name,
+                'street': restaurant.street,
+                'phone': restaurant.phone,
+                'email': restaurant.email,
+            })
+        return JsonResponse(restaurants, safe=False)
+    
+    def post(self, request):
+        data = json.loads(request.body)
+        try:
+            restaurant = models.Restaurant.objects.create(
+                _id = data['id'],
+                rating = data['rating'],
+                name = data['name'],
+                site = data['site'],
+                email = data['email'],
+                phone = data['phone'],
+                street = data['street'],
+                city = data['city'],
+                state = data['state'],
+                lat = data['lat'],
+                lng = data['lng']
+            )
+            return JsonResponse({
+                'id': restaurant._id,
+                'name': restaurant.name,
+                'street': restaurant.street,
+                'city': restaurant.city,
+                'phone': restaurant.phone,
+                'email': restaurant.email,
+            }, status=201)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=400)
 
-    try:
-        user_created = models.UserAPI.objects.create_user(email,password,**data_json)
-        user_created.save()
-    except Exception as e:
-        return JsonResponse({"message":str(e)},)
-    return JsonResponse({"message":"User created"},)
+class RestaurantDetailView(View):
+    def get(self,_,id):
+        if id is None:
+            return JsonResponse({'error': 'id is required'}, status=400)
+        try:
+            res_found = models.Restaurant.objects.get(_id=id)
+            response = res_found.get_dict()
+            return JsonResponse(response, status=200, safe=False)
+        except models.Restaurant.DoesNotExist:
+            return JsonResponse({'error': restaurant_msgs['not_found']}, status=404)
+    
+    def put(self, request, id):
+        data = json.loads(request.body)
+        try:
+            res_found = models.Restaurant.objects.get(_id=id)
+            for key,value in data.items():
+                if key not in models.Restaurant.__dict__.keys():
+                    continue
+                if key == '_id':
+                    continue
+                setattr(res_found, key, value)
+            res_found.save()
+            return JsonResponse({'message': restaurant_msgs['updated'], 
+                                 "object":{**res_found.get_dict()}}, status=200)
+        except models.Restaurant.DoesNotExist:
+            return JsonResponse({'error': restaurant_msgs['not_found']}, status=404)
+
+    def delete(self, _, id):
+        if id is None:
+            return JsonResponse({'error': 'id is required'}, status=400)
+        try:
+            res_found = models.Restaurant.objects.get(_id=id)
+            res_found.delete()
+            return JsonResponse({'message': restaurant_msgs['deleted']}, status=200)
+        except models.Restaurant.DoesNotExist:
+            return JsonResponse({'error': restaurant_msgs['not_found']}, status=404)
+

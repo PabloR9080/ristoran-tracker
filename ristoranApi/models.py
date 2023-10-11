@@ -18,7 +18,21 @@ class Restaurant(models.Model):
 
     def __str__(self):
         return self.name
-    
+
+    def get_dict(self):
+        return {
+            'id': self._id,
+            'rating': self.rating,
+            'name': self.name,
+            'site': self.site,
+            'email': self.email,
+            'phone': self.phone,
+            'street': self.street,
+            'city': self.city,
+            'state': self.state,
+            'lat': self.lat,
+            'lng': self.lng,
+        }
     class Meta:
         ordering = ['name']
         verbose_name = 'Restaurant'
