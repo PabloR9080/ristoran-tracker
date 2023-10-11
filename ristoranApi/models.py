@@ -3,7 +3,27 @@ from django.db import models
 from django.utils import timezone
 
 
+class Restaurant(models.Model):
+    _id = models.CharField(primary_key=True, max_length=50)
+    rating = models.IntegerField()
+    name = models.CharField(max_length=80)
+    site = models.CharField(max_length=80)
+    email = models.CharField(max_length=80)
+    phone = models.CharField(max_length=20)
+    street = models.CharField(max_length=80)
+    city = models.CharField(max_length=80)
+    state = models.CharField(max_length=80)
+    lat = models.FloatField()
+    lng = models.FloatField()
 
+    def __str__(self):
+        return self.name
+    
+    class Meta:
+        ordering = ['name']
+        verbose_name = 'Restaurant'
+        verbose_name_plural = 'Restaurants'
+    
 class UserAPIManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
         if not email:
@@ -30,14 +50,12 @@ class UserAPI(AbstractBaseUser, PermissionsMixin):
     username = models.CharField(max_length=30, blank=True)
     first_name = models.CharField(max_length=30)
     last_name = models.CharField(max_length=30)
+    #required for django
     date_joined = models.DateTimeField(default=timezone.now)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     is_public = models.BooleanField(default=True)
     password = models.CharField(max_length=128)
-    photo = models.CharField(max_length=255, blank=True)
-    cover = models.CharField(max_length=255, blank=True)
-    allowed_users = models.ManyToManyField('self', blank=True)
     objects = UserAPIManager()
 
     USERNAME_FIELD = 'email'
