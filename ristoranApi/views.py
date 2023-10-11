@@ -113,15 +113,22 @@ class RestaurantSpatialViews(View):
             queryset = models.Restaurant.objects.filter(
                 location__distance_lte=(new_point, radius)
             )
-            restaurants = []
+            count = len(queryset)
+            sum_rating = 0
             for restaurant in queryset:
-                restaurants.append({
-                    'id': restaurant._id,
-                    'name': restaurant.name,
-                    'street': restaurant.street,
-                    'phone': restaurant.phone,
-                    'email': restaurant.email,
-                })
-            return JsonResponse(restaurants, safe=False)
+                sum_rating += restaurant.rating
+            avg_rating = sum_rating / len(queryset)
+
+            std_deviation_rating = 0
+            for restaurant in queryset:
+                std_deviation_rating += (restaurant.rating - avg_rating)**2
+            std_deviation_rating = (std_deviation_rating / len(queryset))**(1/2)
+            
+            response = {
+                'count': count,
+                'avg_rating': avg_rating,
+                'std_deviation_rating': std_deviation_rating,
+            }
+            return JsonResponse(response, safe=False)
         except models.Restaurant.DoesNotExist:
             return JsonResponse({'error': 'ERROR PAPU'}, status=404)
