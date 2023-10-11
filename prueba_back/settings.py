@@ -101,7 +101,6 @@ DATABASES = {
         'USER': 'postgres',
         'PASSWORD': 'postgres',
         'NAME': 'postgres',
-        'VERSION': '2.31',
     }
 }
 
