@@ -1,0 +1,35 @@
+name: "prueba edt"
+version: '0.1'
+services:
+  postgresdb:
+    image: postgis/postgis
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+    ports:
+      - "5432:5432"
+    networks:
+      - network1
+  api:
+    build: .
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    networks:
+      - network1
+    depends_on:
+      - postgresdb
+    command:
+      - sh
+      - -c
+      - |
+        python manage.py makemigrations ristoranApi
+        python manage.py makemigrations
+        python manage.py migrate
+        python manage.py runserver 0.0.0.0:8000
+
+networks:
+  network1:
