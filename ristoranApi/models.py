@@ -1,5 +1,5 @@
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
-from django.db import models
+from django.contrib.gis.db import models
 from django.utils import timezone
 
 
@@ -13,8 +13,7 @@ class Restaurant(models.Model):
     street = models.CharField(max_length=80)
     city = models.CharField(max_length=80)
     state = models.CharField(max_length=80)
-    lat = models.FloatField()
-    lng = models.FloatField()
+    location = models.PointField(geography=True, blank=True, null=True)
 
     def __str__(self):
         return self.name
@@ -30,8 +29,8 @@ class Restaurant(models.Model):
             'street': self.street,
             'city': self.city,
             'state': self.state,
-            'lat': self.lat,
-            'lng': self.lng,
+            'lat': self.location.x,
+            'lng': self.location.y,
         }
     class Meta:
         ordering = ['name']

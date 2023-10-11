@@ -27,6 +27,8 @@ class RestaurantListView(View):
                 'street': restaurant.street,
                 'phone': restaurant.phone,
                 'email': restaurant.email,
+                'lat': restaurant.location.x,
+                'lng': restaurant.location.y,
             })
         return JsonResponse(restaurants, safe=False)
     
@@ -43,8 +45,8 @@ class RestaurantListView(View):
                 street = data['street'],
                 city = data['city'],
                 state = data['state'],
-                lat = data['lat'],
-                lng = data['lng']
+                location = Point(float(data['lat']), 
+                                 float(data['lng'])),
             )
             return JsonResponse({
                 'id': restaurant._id,
@@ -94,3 +96,32 @@ class RestaurantDetailView(View):
         except models.Restaurant.DoesNotExist:
             return JsonResponse({'error': restaurant_msgs['not_found']}, status=404)
 
+class RestaurantSpatialViews(View):
+    def get(self,request):
+        lat = request.GET.get('lat', None)
+        lng = request.GET.get('lng', None)
+        radius = request.GET.get('radius', None)
+        try:
+            lat = float(lat)
+            lng = float(lng)
+            radius = float(radius)
+        except ValueError:
+            return JsonResponse({'error': 'lat, lng and radius must be float'}, status=400)
+        try:
+            new_point = Point(lat, lng)
+            print(new_point)
+            queryset = models.Restaurant.objects.filter(
+                location__distance_lte=(new_point, radius)
+            )
+            restaurants = []
+            for restaurant in queryset:
+                restaurants.append({
+                    'id': restaurant._id,
+                    'name': restaurant.name,
+                    'street': restaurant.street,
+                    'phone': restaurant.phone,
+                    'email': restaurant.email,
+                })
+            return JsonResponse(restaurants, safe=False)
+        except models.Restaurant.DoesNotExist:
+            return JsonResponse({'error': 'ERROR PAPU'}, status=404)
