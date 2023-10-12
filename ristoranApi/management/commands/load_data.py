@@ -2,6 +2,7 @@ import csv
 from django.core.management.base import BaseCommand
 from ristoranApi.models import Restaurant
 from django.db import transaction
+from django.db.utils import IntegrityError
 from django.contrib.gis.geos import Point
 class Command(BaseCommand):
     help = 'Load data from a CSV file into the database.'
@@ -26,4 +27,10 @@ class Command(BaseCommand):
                         'state': row['state'],
                         'location': Point(float(row['lat']),float(row['lng'])),
                     }
-                    Restaurant.objects.create(**restaurant_data)
+                    try:
+                        Restaurant.objects.create(**restaurant_data)
+                    except IntegrityError:
+                        continue
+                    
+
+
