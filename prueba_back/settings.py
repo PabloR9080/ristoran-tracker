@@ -29,7 +29,7 @@ SECRET_KEY = environ.get('SECRET_KEY',None) or 'django-insecure-2sc@xp@f#j%tlvah
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = 'RENDER' not in environ
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*'] if environ.get('ENV') != 'prod' else []
 RENDER_EXTERNAL_HOSTNAME = environ.get('RENDER_EXTERNAL_HOSTNAME')
 if RENDER_EXTERNAL_HOSTNAME:    
     ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
