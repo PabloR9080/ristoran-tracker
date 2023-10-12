@@ -22,16 +22,9 @@ services:
       - network1
     depends_on:
       - postgresdb
-    command:
-      - sh
-      - -c
-      - |
-        sleep 20
-        python manage.py makemigrations ristoranApi
-        python manage.py makemigrations
-        python manage.py migrate
-        python manage.py load_data restaurantes.csv
-        python manage.py runserver 0.0.0.0:8000
+    restart: always
+    environment:
+      - ENV=dev
 
 networks:
   network1:

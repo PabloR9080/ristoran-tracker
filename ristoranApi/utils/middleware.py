@@ -7,7 +7,7 @@ class JWTMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
-        if '/api/v1/' not in request.path or '/api/v1/restaurant/' in request.path: 
+        if '/api/v1/' not in request.path: 
             response = self.get_response(request)
             return response
         

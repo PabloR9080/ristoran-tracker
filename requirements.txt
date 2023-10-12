@@ -1,5 +1,4 @@
 Django
 psycopg2
-pymongo
 djangorestframework
 djangorestframework-simplejwt
