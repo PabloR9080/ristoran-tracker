@@ -11,26 +11,25 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
         csv_file = kwargs['csv_file']
-        with transaction.atomic():
-            with open(csv_file, 'r') as file:
-                reader = csv.DictReader(file)
-                for row in reader:
-                    restaurant_data = {
-                        '_id': row['id'],
-                        'rating': row['rating'],
-                        'name': row['name'],
-                        'site': row['site'],
-                        'email': row['email'],
-                        'phone': row['phone'],
-                        'street': row['street'],
-                        'city': row['city'],
-                        'state': row['state'],
-                        'location': Point(float(row['lat']),float(row['lng'])),
-                    }
-                    try:
-                        Restaurant.objects.create(**restaurant_data)
-                    except IntegrityError:
-                        continue
+        with open(csv_file, 'r') as file:
+            reader = csv.DictReader(file)
+            for row in reader:
+                restaurant_data = {
+                    '_id': row['id'],
+                    'rating': row['rating'],
+                    'name': row['name'],
+                    'site': row['site'],
+                    'email': row['email'],
+                    'phone': row['phone'],
+                    'street': row['street'],
+                    'city': row['city'],
+                    'state': row['state'],
+                    'location': Point(float(row['lat']),float(row['lng'])),
+                }
+                try:
+                    Restaurant.objects.create(**restaurant_data)
+                except IntegrityError:
+                    break
                     
 
 
