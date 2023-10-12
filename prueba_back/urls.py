@@ -21,8 +21,10 @@ from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
 )
+from os import environ
 def health_check(_):
-    return JsonResponse({"status":"OK. server running"})
+    print(environ.items())
+    return JsonResponse({"status":"OK. server running", "environment": '' or 'dev'})
 
 urlpatterns = [
     path('admin/', admin.site.urls),
