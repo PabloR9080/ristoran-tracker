@@ -6,6 +6,9 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         if UserAPI.objects.filter(is_superuser=True).count() == 0:
-            UserAPI.objects.create_superuser('root@localhost','admin')
+            try:
+                UserAPI.objects.create_superuser('root@localhost','admin')
+            except Exception as e:
+                print('Error creating admin account: {}'.format(e))
         else:
             print('Admin accounts can only be initialized if no Accounts exist')
