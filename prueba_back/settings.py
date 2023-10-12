@@ -27,10 +27,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = environ.get('SECRET_KEY',None) or 'django-insecure-2sc@xp@f#j%tlvah!rfkw&-o8l+0_))5c5yhg^jg1cxk$8t#5p'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = 'RENDER' not in environ
 
-ALLOWED_HOSTS = ['*']
-
+ALLOWED_HOSTS = []
+RENDER_EXTERNAL_HOSTNAME = environ.get('RENDER_EXTERNAL_HOSTNAME')
+if RENDER_EXTERNAL_HOSTNAME:    
+    ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
 
 # Application definition
 GDAL_LIBRARY_PATH=glob('/usr/lib/libgdal.so.*')[0]
