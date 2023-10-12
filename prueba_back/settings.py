@@ -112,6 +112,7 @@ if environ.get('ENV') == 'prod':
         'default': dj_database_url.config(
             default=environ.get('DATABASE_URL'),
             conn_max_age=600,
+            engine='django.contrib.gis.db.backends.postgis',
         )
     }
 
