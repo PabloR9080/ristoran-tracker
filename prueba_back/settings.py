@@ -109,7 +109,7 @@ DATABASES = {
 }
 if environ.get('ENV') == 'prod':
     DATABASES = {
-        dj_database_url.config(
+        'default': dj_database_url.config(
             default=environ.get('DATABASE_URL'),
             conn_max_age=600,
         )
