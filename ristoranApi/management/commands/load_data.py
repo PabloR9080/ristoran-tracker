@@ -1,7 +1,6 @@
 import csv
 from django.core.management.base import BaseCommand
 from ristoranApi.models import Restaurant
-from django.db import transaction
 from django.db.utils import IntegrityError
 from django.contrib.gis.geos import Point
 class Command(BaseCommand):
