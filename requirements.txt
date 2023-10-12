@@ -3,3 +3,5 @@ psycopg2
 djangorestframework
 djangorestframework-simplejwt
 dj-database-url
+django-rest-swagger
+pyyaml

@@ -22,13 +22,25 @@ from rest_framework_simplejwt.views import (
     TokenRefreshView,
 )
 from os import environ
+from django.views.generic import TemplateView
+from rest_framework.schemas import get_schema_view
+
 def health_check(_):
     return JsonResponse({"status":"OK. server running", "environment": environ.get('ENV','dev')})
 
+
 urlpatterns = [
+    path('swagger-ui/', TemplateView.as_view(
+        template_name='swagger-ui.html',
+        extra_context={'schema_url':'openapi-schema'}
+    ), name='swagger-ui'),
+    path('openapi/', get_schema_view(
+        title="Ristoran API",
+        description="API para el manejo de restaurantes dentro de una zona geo espacial.",
+        version="1.0.0"
+    ), name='openapi-schema'),
     path('admin/', admin.site.urls),
     path('api/v1/', include('ristoranApi.urls', namespace='ristoran'), name='ristoranApi'),
-
     path('health_check/', health_check, name='health_check'),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
