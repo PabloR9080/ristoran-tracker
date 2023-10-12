@@ -14,6 +14,7 @@ from datetime import timedelta
 from glob import glob
 from pathlib import Path
 from os import environ
+import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -107,13 +108,12 @@ DATABASES = {
     }
 }
 if environ.get('ENV') == 'prod':
-    DATABASES['default'].update({
-        'HOST': environ.get('DATABASE_URL'),
-        'PORT': '5432',
-        'NAME': 'ristoran',
-        'USER': 'pablouser',
-        "DATABASE": "ristoran",
-    })
+    DATABASES = {
+        dj_database_url.config(
+            default=environ.get('DATABASE_URL'),
+            conn_max_age=600,
+        )
+    }
 
 AUTH_USER_MODEL = 'ristoranApi.UserAPI'
 
